@@ -1,23 +1,18 @@
 def add(numbers)
   return 0 if numbers.empty?
 
-  # Remove surrounding quotes if present
-  numbers = numbers[1..-2] if numbers.start_with?('"') && numbers.end_with?('"')
+  # Check for invalid input containing comma followed by newline
+  raise ArgumentError, "Invalid input" if numbers.match?(/,\n/)
 
-  # Check for invalid input: comma followed by newline within quotes
-  if numbers.include?('\n,') || numbers.include?(',\n')
-    raise ArgumentError, "Invalid input: #{numbers}"
-  end
+  # Extract numbers using regex
+  nums = numbers.scan(/\d+/)
 
-  # Replace occurrences of "\n" within quotes with ","
-  numbers.gsub!('\n', ',') if numbers.include?('\n')
-
-  # Split by comma and sum
-  numbers.split(",").map(&:to_i).sum
+  # Sum up the numbers
+  nums.map(&:to_i).sum
 end
 
 print "Enter numbers separated by commas or new lines: "
-input = gets.chomp
+input = gets.chomp.gsub('\n', "\n") # Replace literal '\n' with newline character
 
 begin
   puts add(input)

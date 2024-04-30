@@ -1,21 +1,27 @@
-def add(numbers)
-  return 0 if numbers.empty?
+class StringCalculator
+  def initialize
+    @delimiter = ','
+  end
 
-  # Check for invalid input containing comma followed by newline
-  raise ArgumentError, "Invalid input" if numbers.match?(/,\n/)
+  def add(numbers)
+    parse_input(numbers)
+    raise ArgumentError, "negative numbers not allowed #{@negative_numbers.join(',')}" if @negative_numbers.any?
+    
+    @numbers.sum
+  end
 
-  # Extract numbers using regex
-  nums = numbers.scan(/\d+/)
+  private
 
-  # Sum up the numbers
-  nums.map(&:to_i).sum
+  def parse_input(input)
+    if input.start_with?("//")
+      @delimiter = input[2]
+      input = input[4..-1]
+    end
+
+    input = input.gsub("\n", @delimiter)
+
+    @numbers = input.split(@delimiter).map(&:to_i)
+    @negative_numbers = @numbers.select { |num| num < 0 }
+  end
 end
 
-print "Enter numbers separated by commas or new lines: "
-input = gets.chomp.gsub('\n', "\n") # Replace literal '\n' with newline character
-
-begin
-  puts add(input)
-rescue ArgumentError => e
-  puts e.message
-end
